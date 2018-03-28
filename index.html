@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" href="css/geo-html5.css">
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jeLVeZYYQEXYvQnzPPsafFERbTIsLeRP"></script>
+	</head>
+
+	<body onload="loadDemo()">
+
+		<header>
+			<h1>里程演示</h1>
+		</header>
+		<div id="container">
+			<section>
+				<article>
+					<header>
+						<h1>Your Location</h1>
+
+					</header>
+					<p class="info" id="status">您的浏览器不支持HTML5 Geolocation。</p>
+					<div class="geostatus">
+						<p id="latitude">纬度:&nbsp;&nbsp;</p>
+						<p id="longitude">经度:&nbsp;&nbsp;</p>
+						<p id="accuracy">准确度:&nbsp;&nbsp;</p>
+						<p id="timestamp">时间戳:&nbsp;&nbsp;</p>
+						<p id="currDist">目前旅行距离:&nbsp;&nbsp;</p>
+						<p id="totalDist">旅行总距离:&nbsp;&nbsp;</p>
+					</div>
+				</article>
+			</section>
+			<div id="allmap"></div>
+
+		</div>
+		<script>
+			var totalDistance = 0.0;
+			var lastLat;
+			var lastLong;
+			Number.prototype.toRadians = function() {
+				return this * Math.PI / 180;
+			}
+
+			function distance(latitude1, longitude1, latitude2, longitude2) {
+				var R = 6371;
+				var deltaLatitude = (latitude2 - latitude1).toRadians();
+				var deltaLongitude = (longitude2 - longitude1).toRadians();
+				latitude1 = latitude1.toRadians(), latitude2 = latitude2.toRadians();
+				var a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) + Math.cos(latitude1) * Math.cos(latitude2) * Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+				var d = R * c;
+				return d;
+			}
+
+			function updateErrorStatus(message) {
+				document.getElementById("status").style.background = "papayawhip";
+				document.getElementById("status").innerHTML = "<strong>Error</strong>:" + message;
+			}
+
+			function updateStatus(message) {
+				document.getElementById("status").style.background = "palegreen";
+				document.getElementById("status").innerHTML = message;
+			}
+
+			function loadDemo() {
+				if(navigator.geolocation) {
+					document.getElementById("status").innerHTML = "您的浏览器支持HTML5 Geolocation。";
+					navigator.geolocation.watchPosition(updateLocation, handleLocationError, {
+						timeout: 10000
+					});
+				}
+			}
+
+			function updateLocation(position) {
+				var latitude = position.coords.latitude;
+				var longitude = position.coords.longitude;
+				var accuracy = position.coords.accuracy;
+				var timestamp = position.timestamp;
+				document.getElementById("latitude").innerHTML = "纬度:&nbsp;&nbsp;" + latitude;
+				document.getElementById("longitude").innerHTML = "经度:&nbsp;&nbsp;" + longitude;
+				document.getElementById("accuracy").innerHTML = "准确度:&nbsp;&nbsp;" + accuracy;
+				document.getElementById("timestamp").innerHTML = "时间戳:&nbsp;&nbsp;" + timestamp;
+				if(accuracy >= 30000) {
+					updateStatus("Need more accurate values to calculate distance.");
+					return;
+				}
+				if((lastLat != null) && (lastLong != null)) {
+					var currentDistance = distance(latitude, longitude, lastLat, lastLong);
+					document.getElementById("currDist").innerHTML = "目前旅行距离:&nbsp;&nbsp;" + currentDistance.toFixed(2) + "km";
+					totalDistance += currentDistance;
+					document.getElementById("totalDist").innerHTML = "旅行总距离:&nbsp;&nbsp;" + currentDistance.toFixed(2) + "km";
+					updateStatus("Location successfully updated.");
+				}
+				lastLat = latitude;
+				lastLong = longitude;
+
+				var map = new BMap.Map("allmap"); // 创建Map实例
+				map.centerAndZoom(new BMap.Point(longitude, latitude), 14); //设置中心点坐标和地图级别
+				map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
+				map.setCurrentCity("南昌"); //显示城市,此项必须设置
+				map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+				// 以下为当前位置标注设置
+				var point = new BMap.Point(longitude, latitude);
+				map.centerAndZoom(point, 14);
+				var marker = new BMap.Marker(point); //创建标注
+				map.addOverlay(marker); //将标注添加到地图中
+				marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+				// 百度地图API功能--------end
+
+			}
+
+			function handleLocationError(error) {
+				switch(error.code) {
+					case 0:
+						updateErrorStatus("There was an error while retrieving your location.Additional details:" + error.message);
+						break;
+					case 1:
+						updateErrorStatus("The user opted not to share his or her location." + error.message);
+						break;
+					case 2:
+						updateErrorStatus("The browser was unable to determine your location. Additional details:" + error.message);
+						break;
+					case 3:
+						updateErrorStatus("The browser timed out before retrieving the location.");
+						break;
+				}
+			}
+		</script>
+	</body>
+
+</html>
