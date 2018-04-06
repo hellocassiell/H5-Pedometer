@@ -5,11 +5,10 @@
 		<meta charset="utf-8" />
 		<title></title>
 		<link rel="stylesheet" href="css/geo-html5.css">
-		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jeLVeZYYQEXYvQnzPPsafFERbTIsLeRP"></script>
+		
 	</head>
 
 	<body onload="loadDemo()">
-
 		<header>
 			<h1>里程演示</h1>
 		</header>
@@ -18,7 +17,6 @@
 				<article>
 					<header>
 						<h1>Your Location</h1>
-
 					</header>
 					<p class="info" id="status">您的浏览器不支持HTML5 Geolocation。</p>
 					<div class="geostatus">
@@ -31,9 +29,10 @@
 					</div>
 				</article>
 			</section>
-			<div id="allmap"></div>
-
+			<!-- 百度地图位置显示 -->
+			<div id="allmap"></div>    
 		</div>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=jeLVeZYYQEXYvQnzPPsafFERbTIsLeRP" ></script>
 		<script>
 			var totalDistance = 0.0;
 			var lastLat;

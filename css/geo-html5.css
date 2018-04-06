@@ -1,7 +1,9 @@
 body {
-	background-color: #ccc;
+	background: url(../img/1.jpg) no-repeat;
+	background-size: cover;
 	width: 100%;
-	height: 600px;
+	height: 100%;
+	position: relative;
 }
 
 header {
@@ -15,19 +17,24 @@ header {
 }
 
 .geostatus {
-	width: 50%;
-	height: 190px;
+	width: 400px;
+	height: 210px;
 	margin-top: 10px;
-	margin-left: 25%;
+	position: absolute;
+	left: 50%;
+	margin-left: -200px;
 	font-size: 15px;
-	padding: 25px;
-	border: 5px solid paleturquoise;
+	padding: 0px 15px 20px 15px;
+	color: #fff;
+	background: rgba(255, 255, 255, 0);
+	border-radius: 20px;
+	border: 1px solid rgba(255, 255, 255, .5);
 }
 
 #allmap {
 	width: 80%;
 	height: 300px;
-	margin-top: 10px;
+	margin-top: 290px;
 	margin-left: 10%;
 	overflow: hidden;
 	font-family: "微软雅黑";
